@@ -1,51 +1,24 @@
-
+```php
 <?php
 include "db.php";
 
-$message = "";
+$sql = "SELECT
+            menu_items.id,
+            menu_items.name,
+            menu_items.description,
+            menu_items.price,
+            menu_items.image,
+            menu_items.status,
+            categories.name AS category_name
+        FROM menu_items
+        LEFT JOIN categories
+            ON menu_items.category_id = categories.id
+        ORDER BY menu_items.id ASC";
 
-$categories = $conn->query("SELECT id, name FROM categories ORDER BY name");
+$result = $conn->query($sql);
 
-if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    $name = trim($_POST["name"] ?? "");
-    $description = trim($_POST["description"] ?? "");
-    $price = $_POST["price"] ?? "";
-    $category_id = (int) ($_POST["category_id"] ?? 0);
-    $image = trim($_POST["image"] ?? "");
-
-    if (
-        $name === "" ||
-        $price === "" ||
-        !is_numeric($price) ||
-        (float)$price < 0 ||
-        $category_id <= 0
-    ) {
-        $message = "Please enter a valid name, price, and category.";
-    } else {
-        $stmt = $conn->prepare(
-            "INSERT INTO menu_items
-            (name, description, price, image, category_id)
-            VALUES (?, ?, ?, ?, ?)"
-        );
-
-        $stmt->bind_param(
-            "ssdsi",
-            $name,
-            $description,
-            $price,
-            $image,
-            $category_id
-        );
-
-        if ($stmt->execute()) {
-            header("Location: menu-items.php");
-            exit;
-        } else {
-            $message = "Error adding item: " . $stmt->error;
-        }
-
-        $stmt->close();
-    }
+if (!$result) {
+    die("Error loading menu items: " . $conn->error);
 }
 ?>
 
@@ -54,108 +27,293 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Menu Item</title>
+    <title>Menu Items - Brew Co.</title>
+
     <style>
+        * {
+            box-sizing: border-box;
+        }
+
         body {
             font-family: Arial, sans-serif;
             background: #f5f1eb;
             margin: 0;
             padding: 30px;
+            color: #333;
         }
 
         .container {
-            max-width: 550px;
-            margin: 20px auto;
+            max-width: 1200px;
+            margin: auto;
             background: white;
             padding: 25px;
             border-radius: 10px;
             box-shadow: 0 3px 12px #00000015;
+            overflow-x: auto;
         }
 
         h1 {
             color: #5c3825;
+            margin-top: 0;
         }
 
-        label {
-            display: block;
-            margin-top: 15px;
+        .add-btn {
+            display: inline-block;
+            background: #6f4e37;
+            color: white;
+            padding: 11px 16px;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        .add-btn:hover {
+            background: #4e3525;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 850px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+            vertical-align: middle;
+        }
+
+        th {
+            background: #6f4e37;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background: #faf7f3;
+        }
+
+        .product-img {
+            width: 75px;
+            height: 75px;
+            object-fit: cover;
+            border-radius: 7px;
+        }
+
+        .action-link {
+            color: #6f4e37;
+            margin-right: 8px;
+            text-decoration: none;
+        }
+
+        .action-link:hover {
+            text-decoration: underline;
+        }
+
+        .delete-link {
+            color: #c0392b;
+        }
+
+        .toggle-btn {
+            background: none;
+            border: none;
+            color: #287a46;
+            cursor: pointer;
+            font-size: 14px;
+            margin-right: 8px;
+            padding: 0;
+        }
+
+        .toggle-btn:hover {
+            text-decoration: underline;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: #6f4e37;
+            text-decoration: none;
+        }
+
+        .status-active {
+            color: #287a46;
             font-weight: bold;
         }
 
-        input, textarea, select {
-            width: 100%;
-            box-sizing: border-box;
-            padding: 11px;
-            margin-top: 6px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 15px;
+        .status-inactive {
+            color: #c0392b;
+            font-weight: bold;
         }
 
-        button {
-            margin-top: 20px;
-            padding: 12px 18px;
-            background: #6f4e37;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
 
-        button:hover {
-            background: #4b3223;
-        }
-
-        .message {
-            color: #b00020;
-        }
-
-        a {
-            color: #6f4e37;
+            .container {
+                padding: 15px;
+            }
         }
     </style>
 </head>
+
 <body>
 
 <div class="container">
-    <h1>Add Menu Item</h1>
 
-    <?php if ($message !== ""): ?>
-        <p class="message">
-            <?= htmlspecialchars($message) ?>
-        </p>
-    <?php endif; ?>
+    <h1>Menu Items</h1>
 
-    <form method="POST">
-        <label for="name">Item Name</label>
-        <input type="text" id="name" name="name" required>
+    <a class="add-btn" href="add-menu-item.php">
+        + Add Menu Item
+    </a>
 
-        <label for="description">Description</label>
-        <textarea id="description" name="description" rows="3"></textarea>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Image</th>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Price</th>
+                <th>Category</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
 
-        <label for="price">Price</label>
-        <input type="number" id="price" name="price"
-               min="0" step="0.01" required>
+        <tbody>
+        <?php
+        $displayId = 1;
 
-        <label for="category_id">Category</label>
-        <select id="category_id" name="category_id" required>
-            <option value="">Select Category</option>
-            <?php while ($category = $categories->fetch_assoc()): ?>
-                <option value="<?= (int)$category["id"] ?>">
-                    <?= htmlspecialchars($category["name"]) ?>
-                </option>
+        if ($result->num_rows > 0):
+        ?>
+
+            <?php while ($item = $result->fetch_assoc()): ?>
+                <tr>
+                    <td><?= $displayId++ ?></td>
+
+                    <td>
+                        <?php
+                        $imagePath = trim($item["image"] ?? "");
+
+                        $imageFile = dirname(__DIR__)
+                            . DIRECTORY_SEPARATOR
+                            . str_replace(
+                                "/",
+                                DIRECTORY_SEPARATOR,
+                                $imagePath
+                            );
+                        ?>
+
+                        <?php if (
+                            $imagePath !== "" &&
+                            is_file($imageFile)
+                        ): ?>
+                            <img
+                                class="product-img"
+                                src="../<?= htmlspecialchars(
+                                    $imagePath,
+                                    ENT_QUOTES,
+                                    'UTF-8'
+                                ) ?>"
+                                alt="<?= htmlspecialchars(
+                                    $item["name"],
+                                    ENT_QUOTES,
+                                    'UTF-8'
+                                ) ?>"
+                            >
+                        <?php else: ?>
+                            <span>No image</span>
+                        <?php endif; ?>
+                    </td>
+
+                    <td>
+                        <?= htmlspecialchars(
+                            $item["name"],
+                            ENT_QUOTES,
+                            'UTF-8'
+                        ) ?>
+                    </td>
+
+                    <td>
+                        <?= htmlspecialchars(
+                            $item["description"] ?? "",
+                            ENT_QUOTES,
+                            'UTF-8'
+                        ) ?>
+                    </td>
+
+                    <td>
+                        $<?= number_format(
+                            (float)$item["price"],
+                            2
+                        ) ?>
+                    </td>
+
+                    <td>
+                        <?= htmlspecialchars(
+                            $item["category_name"] ?? "No category",
+                            ENT_QUOTES,
+                            'UTF-8'
+                        ) ?>
+                    </td>
+
+                    <td>
+                        <?php if ((int)$item["status"] === 1): ?>
+                            <span class="status-active">Active</span>
+                        <?php else: ?>
+                            <span class="status-inactive">Inactive</span>
+                        <?php endif; ?>
+                    </td>
+
+                    <td>
+                        <form
+                            action="toggle-menu-item.php"
+                            method="POST"
+                            style="display:inline;"
+                            onsubmit="return confirm('Change this item status?');"
+                        >
+                            <input
+                                type="hidden"
+                                name="id"
+                                value="<?= (int)$item["id"] ?>"
+                            >
+
+                            <button class="toggle-btn" type="submit">
+                                <?= (int)$item["status"] === 1
+                                    ? "Deactivate"
+                                    : "Activate" ?>
+                            </button>
+                        </form>
+
+                        <a
+                            class="action-link"
+                            href="edit-menu-item.php?id=<?= (int)$item["id"] ?>"
+                        >Edit</a>
+
+                        <a
+                            class="action-link delete-link"
+                            href="delete-menu-item.php?id=<?= (int)$item["id"] ?>"
+                            onclick="return confirm('Are you sure you want to delete this item?');"
+                        >Delete</a>
+                    </td>
+                </tr>
             <?php endwhile; ?>
-        </select>
 
-        <label for="image">Image Path</label>
-        <input type="text" id="image" name="image"
-               placeholder="images/coffee.jpg">
+        <?php else: ?>
+            <tr>
+                <td colspan="8">No menu items found.</td>
+            </tr>
+        <?php endif; ?>
+        </tbody>
+    </table>
 
-        <button type="submit">Add Menu Item</button>
-    </form>
+    <a class="back-link" href="index.php">
+        &larr; Back to Dashboard
+    </a>
 
-    <p><a href="menu-items.php">Back to Menu Items</a></p>
 </div>
 
 </body>
 </html>
+```
