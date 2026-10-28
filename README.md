@@ -1,106 +1,152 @@
-# Brew Co. — Digital Coffee Menu
 
-A database-driven digital menu and administration dashboard built for a coffee shop. The project allows customers to explore menu items while administrators manage categories, products, prices, images, and availability.
+# Brew Co. — QR Menu & Admin Dashboard
+
+A full-stack QR menu web application developed using PHP, MySQL, HTML, and CSS.
+
+The project provides customers with a digital menu and allows administrators to manage categories, menu items, prices, images, and availability through a dedicated admin dashboard.
 
 ## Project Overview
 
-Coffee shops need a convenient way to display their menus and keep product information up to date. Brew Co. provides a digital menu connected to a MySQL database, together with an admin dashboard for managing menu content without manually editing the website for every change.
+Brew Co. was developed as part of my Web Development Internship at Violet Programming.
+
+The goal was to create a user-friendly digital menu that customers could access through a QR code, while providing an administrative interface for managing menu content.
 
 ## Features
 
 ### Customer Menu
-- Display menu items organized by categories.
-- Show product names, descriptions, prices, and images.
-- Retrieve menu content dynamically from the database.
+- Responsive digital menu interface
+- Menu items organized by category
+- Product images, descriptions, and prices
+- Coffee, Non-Coffee, and Pastries sections
+- Dynamic menu content retrieved from MySQL
 
 ### Admin Dashboard
-- View dashboard statistics.
-- Add, edit, and delete menu items.
-- Create and manage menu categories.
-- Activate and deactivate menu items.
-- Manage product information through PHP forms.
-
-### Database
-- MySQL database integration.
-- Separate tables for categories, menu items, and admin users.
-- Category relationships for organizing menu products.
-
-## Technologies Used
-
-- **Backend:** PHP
-- **Database:** MySQL, phpMyAdmin
-- **Frontend:** HTML5, CSS3
-- **Local Development:** XAMPP, Apache
-- **Database Operations:** SQL, CRUD
-
-## My Contribution
-
-I developed the customer-facing digital menu and the administrative functionality. My work included connecting PHP pages to MySQL, implementing CRUD operations, displaying menu items by category, handling product images, and troubleshooting database relationship and image-path issues.
-
-## Project Structure
-
-```text
-QR-Menu/
-├── admin/
-│   ├── index.php
-│   ├── categories.php
-│   └── menu-items.php
-├── images/
-├── index.php
-└── brew_co_db.sql
-```
-
-*Note: The structure above highlights the main project components. Additional PHP files and assets may be present in the repository.*
-
-## Installation and Setup
-
-### Prerequisites
-- A local PHP development environment using XAMPP.
-- Apache and MySQL services.
-- phpMyAdmin.
-
-### Steps
-
-1. Clone or download this repository.
-2. Copy the project folder into your XAMPP `htdocs` directory.
-3. Start Apache and MySQL from the XAMPP Control Panel.
-4. Open phpMyAdmin in your browser.
-5. Create a database named `brew_co_db`.
-6. Import the `brew_co_db.sql` file into the database.
-7. Open the customer menu:
-
-   `http://localhost/QR-Menu/QR-Menu/index.php`
-
-8. Open the admin dashboard:
-
-   `http://localhost/QR-Menu/QR-Menu/admin/index.php`
-
-> The local URLs above assume your project folder is located at `htdocs/QR-Menu/QR-Menu`. Adjust the paths if your folder structure is different.
+- Dashboard displaying menu statistics
+- Add, edit, and delete categories
+- Activate or deactivate categories
+- Add, edit, and delete menu items
+- Upload and manage product images
+- Update menu item availability
+- Manage product descriptions and prices
 
 ## Screenshots
 
-Screenshots of the customer menu and admin dashboard can be added here to demonstrate the user interface and key functionality.
+### Customer QR Menu
 
-<!-- Add screenshots from the repository's images folder when available. -->
+![Brew Co. Customer Menu](brew-co-menu.png)
+
+### Admin Dashboard
+
+![Brew Co. Admin Dashboard](brew-co-dashboard.png)
+
+## Technologies Used
+
+- PHP
+- MySQL
+- HTML5
+- CSS3
+- JavaScript
+- XAMPP
+- phpMyAdmin
+- Git & GitHub
+
+## Database Structure
+
+The application uses a MySQL database named `brew_co_db`.
+
+Main tables:
+
+- `categories` — Stores menu categories and their status.
+- `menu_items` — Stores menu items, descriptions, prices, images, category relationships, and status.
+- `admin_users` — Stores administrator account information.
+
+The database export is included in the repository:
+
+`brew_co_db.sql`
+
+## Installation and Setup
+
+### Requirements
+
+- XAMPP
+- PHP
+- MySQL
+- Web browser
+
+### Steps
+
+1. Install and open XAMPP.
+2. Start Apache and MySQL.
+3. Clone or download this repository.
+4. Copy the project folder into `C:\xampp\htdocs\`.
+5. Open phpMyAdmin at `http://localhost/phpmyadmin`.
+6. Create a database named `brew_co_db`.
+7. Import `brew_co_db.sql`.
+8. Configure the local database connection if required.
+9. Open the application in your browser.
+
+### Customer Menu
+
+`http://localhost/brew-co-qr-menu/index.php`
+
+### Admin Dashboard
+
+`http://localhost/brew-co-qr-menu/admin/`
+
+The exact local URL depends on the project folder name.
+
+## My Contribution
+
+As a Web Development Intern at Violet Programming, I worked on:
+
+- Developing the customer-facing QR menu interface.
+- Connecting PHP pages to the MySQL database.
+- Building category and menu item management features.
+- Implementing CRUD operations.
+- Handling product image uploads and display.
+- Implementing active and inactive status controls.
+- Debugging database queries and application errors.
+- Improving the responsive layout and overall user experience.
+
+## Technical Challenges
+
+### Database Relationships
+Implemented relationships between menu items and categories using MySQL foreign keys.
+
+### Image Management
+Handled product image uploads, file paths, and fallback images to ensure menu items displayed correctly.
+
+### Dynamic Content
+Connected the customer menu and administrative interface to the same database so changes could be reflected dynamically.
+
+### Admin Functionality
+Implemented category and menu item management with create, read, update, and delete operations.
 
 ## What I Learned
 
-- Connecting PHP applications to a MySQL database.
-- Implementing create, read, update, and delete operations.
-- Organizing menu data using related database tables.
-- Handling uploaded images and file paths.
-- Troubleshooting database constraints and SQL errors.
-- Building administrative interfaces for managing dynamic content.
+This project strengthened my practical experience with:
+
+- Full-stack PHP development
+- MySQL database management
+- CRUD operations
+- Server-side form handling
+- File uploads
+- Debugging and troubleshooting
+- Responsive web design
+- Git and GitHub
+
+## Project Status
+
+Completed as an internship project.
+
+The application runs locally using XAMPP, PHP, and MySQL.
 
 ## Developer
 
 **Sally Kadi**
 
-Junior PHP Full-Stack Developer
+Junior PHP Full-Stack Developer | PHP, MySQL & JavaScript
 
-- [GitHub Profile](https://github.com/sally-kadi)
-- [LinkedIn Profile](https://www.linkedin.com/in/sally-kadi/)
-
----
-
-This project was developed as part of my web development experience at Violet Programming.
+- Portfolio: https://sally-kadi.github.io/sally-portfolio/
+- GitHub: https://github.com/sally-kadi
+- LinkedIn: https://www.linkedin.com/in/sally-kadi/
